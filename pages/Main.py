@@ -93,3 +93,6 @@ if st.session_state.quiz_started:
     else:
         st.success("모든 문제를 완료했습니다!")
         st.write(f"최종 점수: {st.session_state.score}/{len(st.session_state.selected_questions)}")
+
+        if st.button("자세한 결과 보기"):
+                    st.switch_page("pages/Results.py")
