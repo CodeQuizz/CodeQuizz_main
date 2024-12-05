@@ -10,24 +10,40 @@ def load_users():
     return {}
 
 def main():
-    st.title("Login Page 🔐")
-
+    st.title("Programming Quiz Login 🔐")
+    
+    # 세션 상태 초기화
     if "logged_in" not in st.session_state:
         st.session_state["logged_in"] = False
 
-    with st.form("login_form"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submit = st.form_submit_button("Login")
-
-        if submit:
+    # 이미 로그인된 경우
+    if st.session_state.get("logged_in", False):
+        st.success(f"환영합니다, {st.session_state['name']}님!")
+        if st.button("로그아웃"):
+            st.session_state["logged_in"] = False
+            st.session_state["username"] = None
+            st.session_state["name"] = None
+            st.success("로그아웃되었습니다.")
+            st.rerun()
+        
+        if st.button("퀴즈 시작하기"):
+            st.switch_page("pages/Main.py")
+    
+    # 로그인되지 않은 경우
+    else:
+        username = st.text_input("아이디")
+        password = st.text_input("비밀번호", type="password")
+        
+        if st.button("로그인"):
             users = load_users()
             if username in users and users[username]["password"] == password:
                 st.session_state["logged_in"] = True
                 st.session_state["username"] = username
-                st.success("Login successful!")
+                st.session_state["name"] = users[username]["name"]
+                st.success(f"환영합니다, {users[username]['name']}님!")
+                st.rerun()
             else:
-                st.error("Invalid username or password")
+                st.error("아이디 또는 비밀번호가 잘못되었습니다.")
 
 if __name__ == "__main__":
     main()
