@@ -40,13 +40,14 @@ def start_quiz():
     random.shuffle(st.session_state.selected_questions)
 
 # 메인 화면
-st.sidebar.title("옵션")
-st.sidebar.subheader("난이도 설정")
-st.session_state.selected_level = st.sidebar.selectbox(
-    "난이도를 선택하세요:", list(questions_data.keys())
-)
-if st.sidebar.button("퀴즈 시작"):
-    start_quiz()
+if not st.session_state.quiz_started:
+    st.title("옵션")
+    st.subheader("난이도 설정")
+    st.session_state.selected_level = st.selectbox(
+        "난이도를 선택하세요:", list(questions_data.keys())
+    )
+    if st.button("퀴즈 시작"):
+        start_quiz()
 
 # 퀴즈 진행
 if st.session_state.quiz_started:
