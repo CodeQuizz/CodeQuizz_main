@@ -2,6 +2,7 @@
 venv/
 newvenv/
 .env
+/myenv/
 
 # Python
 __pycache__/
