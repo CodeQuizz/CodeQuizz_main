@@ -9,7 +9,7 @@ def load_questions(file_path):
         return json.load(file)
 
 # JSON 파일 경로
-QUESTION_FILE = "quiz_questions.json"
+QUESTION_FILE = "data/quiz_questions.json"
 
 # 문제 데이터 로드
 questions_data = load_questions(QUESTION_FILE)
