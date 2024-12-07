@@ -2,6 +2,7 @@ import streamlit as st
 import base64
 import os
 
+<<<<<<< HEAD
 # 페이지 설정
 st.set_page_config(
     page_title="Programming Quiz App",
@@ -9,6 +10,24 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+=======
+st.set_page_config(page_title="Programming Quiz App", page_icon="🎯", layout="wide")
+#현재 위치를 알려주는 navbar
+def navbar():
+    col1, col2, col3 = st.columns([6,3,1])
+    with col1:
+        st.markdown("🏠 Home")
+    with col2:
+        if st.session_state.get("logged_in"):
+            st.write(f"👤 {st.session_state['name']}님")
+    with col3:
+        if st.session_state.get("logged_in"):
+            if st.button("로그아웃"):
+                st.session_state["logged_in"] = False
+                st.session_state["username"] = None
+                st.session_state["name"] = None
+                st.rerun()
+>>>>>>> 38b6c7d188aa092e1cf685c9c7a0f0985f334d4f
 
 # 배경 이미지 설정 함수
 def set_background(png_file_path):
@@ -80,6 +99,7 @@ st.markdown(
 )
 
 def main():
+<<<<<<< HEAD
     # 페이지 제목을 h1 태그로 추가하고 스타일을 적용
     st.markdown("<h1 style='color: black;'>Welcome to Programming Quiz! 🚀</h1>", unsafe_allow_html=True)
     
@@ -107,3 +127,19 @@ def main():
 
 if __name__ == "__main__":
     main()
+=======
+    navbar()
+    st.title("Welcome to Programming Quiz! 🚀")
+    
+    st.markdown("""
+    ### 프로그래밍 실력을 테스트해보세요!
+    다양한 난이도의 퀴즈로 실력을 향상시켜보세요.
+    """)
+    
+    if st.button("시작하기 ▶️", use_container_width=True):
+        st.switch_page("pages/Login.py")
+
+if __name__ == "__main__":
+    main()
+
+>>>>>>> 38b6c7d188aa092e1cf685c9c7a0f0985f334d4f
