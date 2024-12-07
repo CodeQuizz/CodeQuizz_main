@@ -39,6 +39,8 @@ if "show_hint" not in st.session_state:
     st.session_state.show_hint = False
 if "feedback" not in st.session_state:
     st.session_state.feedback = None
+if "wrong_answers" not in st.session_state:
+    st.session_state.wrong_answers = []  # 틀린 문제 저장
 # 타이머 추가했습니다.
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
@@ -51,6 +53,7 @@ def start_quiz():
     st.session_state.feedback = None
     st.session_state.selected_questions = questions_data[st.session_state.selected_level]
     random.shuffle(st.session_state.selected_questions)
+    st.session_state.wrong_answers = []  # 틀린 문제 초기화
     st.session_state.start_time = time.time()
 
 def main():
@@ -97,6 +100,7 @@ def main():
                     st.session_state.score += 1
                 else:
                     st.session_state.feedback = f"오답입니다. 정답은 '{question_data['answer']}' 입니다."
+                    st.session_state.wrong_answers.append(question_data)  # 틀린 문제 저장
                 st.rerun()
 
             if st.session_state.feedback:
