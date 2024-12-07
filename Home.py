@@ -2,15 +2,6 @@ import streamlit as st
 import base64
 import os
 
-<<<<<<< HEAD
-# 페이지 설정
-st.set_page_config(
-    page_title="Programming Quiz App",
-    page_icon="🎯",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-=======
 st.set_page_config(page_title="Programming Quiz App", page_icon="🎯", layout="wide")
 #현재 위치를 알려주는 navbar
 def navbar():
@@ -27,7 +18,6 @@ def navbar():
                 st.session_state["username"] = None
                 st.session_state["name"] = None
                 st.rerun()
->>>>>>> 38b6c7d188aa092e1cf685c9c7a0f0985f334d4f
 
 # 배경 이미지 설정 함수
 def set_background(png_file_path):
@@ -99,35 +89,6 @@ st.markdown(
 )
 
 def main():
-<<<<<<< HEAD
-    # 페이지 제목을 h1 태그로 추가하고 스타일을 적용
-    st.markdown("<h1 style='color: black;'>Welcome to Programming Quiz! 🚀</h1>", unsafe_allow_html=True)
-    
-    # 설명 섹션 - 텍스트 색상 명시적으로 설정
-    st.markdown(
-        """<h3 style='color: black;'>Test Your Programming Knowledge!</h3>""",
-        unsafe_allow_html=True
-    )
-
-    # 사용 방법 버튼
-    with st.expander("📘 How to use"):
-        st.markdown(
-            """<p style='color: black;'>
-            1. <b>Get Started ▶️ 버튼 클릭</b>: 퀴즈를 시작하려면 이 버튼을 누르세요.<br>
-            2. <b>로그인</b>: 사용자 계정으로 로그인하거나 새로운 계정을 등록하세요.<br>
-            3. <b>퀴즈 풀이</b>: 프로그래밍 관련 문제를 풀고 결과를 확인하세요.<br>
-            4. <b>결과 확인</b>: 점수와 피드백을 확인하여 실력을 분석하세요.
-            </p>""",
-            unsafe_allow_html=True
-        )
-
-    # 시작 버튼
-    if st.button("Get Started ▶️", use_container_width=True):
-        st.write("Redirecting to Login Page...")  # 실제 페이지 이동 기능은 사용자 맞춤 코드로 수정 필요
-
-if __name__ == "__main__":
-    main()
-=======
     navbar()
     st.title("Welcome to Programming Quiz! 🚀")
     
@@ -142,4 +103,3 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     main()
 
->>>>>>> 38b6c7d188aa092e1cf685c9c7a0f0985f334d4f
