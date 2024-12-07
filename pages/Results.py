@@ -1,8 +1,9 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import numpy as np
 
 def navbar():
-    col1, col2, col3 = st.columns([6,3,1])
+    col1, col2, col3 = st.columns([6, 3, 1])
     with col1:
         st.markdown("🏠 Home > Login > Quiz > Results")
     with col2:
@@ -16,8 +17,6 @@ def navbar():
                 st.session_state["name"] = None
                 st.rerun()
 
-
-
 def main():
     navbar()
     if not st.session_state.get("logged_in", False):
@@ -28,9 +27,10 @@ def main():
 
     st.title("📊 퀴즈 결과")
     
-    # session_state를 통해서 로그인을 계속 유지합니다.
     score = st.session_state.get("score", 0)
     total_questions = len(st.session_state.get("selected_questions", []))
+    wrong_answers = st.session_state.get("wrong_answers", [])
+    
     if total_questions > 0:
         score_percentage = (score / total_questions) * 100
     else:
@@ -54,14 +54,41 @@ def main():
 
     st.success(feedback)
 
-    st.markdown("### 점수 진행률")
-    st.progress(score_percentage / 100)
+    st.markdown("### 점수 시각화")
 
-    fig, ax = plt.subplots(figsize=(10, 3))
-    ax.barh(['점수'], [score_percentage], color='teal', alpha=0.8)
-    ax.set_xlim(0, 100)
-    ax.set_xlabel('점수 (%)')
+    # 레이더 차트 데이터 생성
+    max_score = 100
+    values = [score_percentage]
+
+    angles = np.linspace(0, 2 * np.pi, 100, endpoint=True)
+    radius = [score_percentage / max_score] * len(angles)
+
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+    ax.fill(angles, radius, color='teal', alpha=0.4)
+    ax.set_ylim(0, 1)
+    ax.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    ax.set_yticklabels(["0", "20", "40", "60", "80", "100"], fontsize=10)
+    ax.set_xticks([])
+    ax.set_xticklabels([])
+    ax.set_title("Your Score", fontsize=15, y=1.1)
+
     st.pyplot(fig)
+
+    # 틀린 문제 분석 부분
+    st.markdown("### ❌ 틀린 문제 분석")
+    if wrong_answers:
+        for i, question in enumerate(wrong_answers):
+            with st.expander(f"문제 {i + 1}", expanded=False):
+                # 카드 형태로 문제 표시
+                card = f"""
+                <div style="background-color: #f8d7da; border-left: 5px solid #f5c6cb; padding: 10px; margin: 10px 0;">
+                    <strong>문제:</strong> {question['question']}<br>
+                    <strong>정답:</strong> {question['answer']}
+                </div>
+                """
+                st.markdown(card, unsafe_allow_html=True)
+    else:
+        st.markdown("모든 문제를 맞추셨습니다! 🎉")
 
     if st.button("🔄 다시 풀기"):
         st.switch_page("pages/Main.py")
