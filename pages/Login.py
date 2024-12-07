@@ -2,6 +2,13 @@ import streamlit as st
 import json
 from pathlib import Path
 
+
+#현재 위치를 알려주는 navbar
+def navbar():
+    col1, col2, col3 = st.columns([6,3,1])
+    with col1:
+        st.markdown("🏠 Home > Login")
+
 def load_users():
     users_file = Path("data/users.json")
     if users_file.exists():
@@ -10,26 +17,16 @@ def load_users():
     return {}
 
 def main():
+    navbar()
     st.title("Programming Quiz Login 🔐")
     
-    # 세션 상태 초기화
     if "logged_in" not in st.session_state:
         st.session_state["logged_in"] = False
 
-    # 이미 로그인된 경우
     if st.session_state.get("logged_in", False):
         st.success(f"환영합니다, {st.session_state['name']}님!")
-        if st.button("로그아웃"):
-            st.session_state["logged_in"] = False
-            st.session_state["username"] = None
-            st.session_state["name"] = None
-            st.success("로그아웃되었습니다.")
-            st.rerun()
-        
         if st.button("퀴즈 시작하기"):
             st.switch_page("pages/Main.py")
-    
-    # 로그인되지 않은 경우
     else:
         username = st.text_input("아이디")
         password = st.text_input("비밀번호", type="password")
