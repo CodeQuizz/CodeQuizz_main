@@ -58,6 +58,34 @@ def show_current_level():
         )
 
 
+# 현재 난이도 표시
+def show_current_level():
+    if st.session_state.get("selected_level"):
+        level_colors = {
+            "초급": "#4CAF50",  # 초록색
+            "중급": "#FFA500",  # 주황색
+            "고급": "#FF4500"   # 빨간색
+        }
+        selected_color = level_colors.get(st.session_state["selected_level"], "#000000")
+        st.markdown(
+            f"""
+            <div style="
+                border-radius: 10px; 
+                padding: 6px 8px; 
+                background-color: {selected_color}; 
+                text-align: center; 
+                display: inline-block; 
+                color: white;
+                background-color: {selected_color};
+                font-size: 13px;
+            ">
+                {st.session_state['selected_level']}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+
 @st.cache_data
 def load_questions(file_path):
     with open(file_path, "r", encoding="utf-8") as file:
