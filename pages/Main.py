@@ -3,32 +3,23 @@ import json
 import random
 import time
 
-# 페이지의 현재 위치를 알려주는 UX 추가
+# 현재 위치를 알려주는 UX 추가
 def navbar():
-    col1, col2, col3 = st.columns([6,3,1])
+    col1, col2, col3 = st.columns([6, 3, 1])
     with col1:
         st.markdown("🏠 Home > Login > Quiz")
     with col2:
         if st.session_state.get("logged_in"):
             st.write(f"👤 {st.session_state['name']}님")
-
     with col3:
         if st.session_state.get("logged_in"):
-            st.markdown(
-                """
-                <div style="display: flex; justify-content: flex-end; align-items: center;">
-                    <button style="
-                        border: none;
-                        padding: 5px 10px;
-                        font-size: 14px;
-                        cursor: pointer;
-                        border-radius: 4px;
-                        white-space: nowrap;
-                    " onclick="window.location.reload()">로그아웃</button>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            if st.button("로그아웃"):
+                # 로그아웃 처리: 세션 상태 초기화
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+                st.session_state["logged_in"] = False  # 로그인 상태 해제
+                st.session_state["name"] = None  # 사용자 정보 초기화
+                st.switch_page("pages/Login.py")  # 로그인 페이지로 이동
 
 # 현재 난이도 표시
 def show_current_level():
@@ -48,7 +39,6 @@ def show_current_level():
                 text-align: center; 
                 display: inline-block; 
                 color: white;
-                background-color: {selected_color};
                 font-size: 13px;
             ">
                 {st.session_state['selected_level']}
@@ -56,35 +46,6 @@ def show_current_level():
             """,
             unsafe_allow_html=True
         )
-
-
-# 현재 난이도 표시
-def show_current_level():
-    if st.session_state.get("selected_level"):
-        level_colors = {
-            "초급": "#4CAF50",  # 초록색
-            "중급": "#FFA500",  # 주황색
-            "고급": "#FF4500"   # 빨간색
-        }
-        selected_color = level_colors.get(st.session_state["selected_level"], "#000000")
-        st.markdown(
-            f"""
-            <div style="
-                border-radius: 10px; 
-                padding: 6px 8px; 
-                background-color: {selected_color}; 
-                text-align: center; 
-                display: inline-block; 
-                color: white;
-                background-color: {selected_color};
-                font-size: 13px;
-            ">
-                {st.session_state['selected_level']}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
 
 @st.cache_data
 def load_questions(file_path):
@@ -108,7 +69,6 @@ if "feedback" not in st.session_state:
     st.session_state.feedback = None
 if "wrong_answers" not in st.session_state:
     st.session_state.wrong_answers = []  # 틀린 문제 저장
-# 타이머 추가했습니다.
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
 
@@ -142,7 +102,7 @@ def main():
 
     if st.session_state.quiz_started:
         elapsed = int(time.time() - st.session_state.start_time)
-        mins = elapsed // 60 
+        mins = elapsed // 60
         secs = elapsed % 60
         st.markdown(f"⏱️ 경과 시간: {mins:02d}분 {secs:02d}초")
 
