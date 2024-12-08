@@ -15,7 +15,8 @@
 
 ## 프로젝트 구조
 
-```project_root/
+```
+project_root/
 ├── .github/                 # GitHub 관련 워크플로 및 설정
 ├── assets/                  # 이미지 및 기타 정적 파일
 │   ├── coding.png           # 코딩 관련 이미지
