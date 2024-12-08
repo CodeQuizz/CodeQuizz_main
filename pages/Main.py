@@ -14,21 +14,11 @@ def navbar():
 
     with col3:
         if st.session_state.get("logged_in"):
-            st.markdown(
-                """
-                <div style="display: flex; justify-content: flex-end; align-items: center;">
-                    <button style="
-                        border: none;
-                        padding: 5px 10px;
-                        font-size: 14px;
-                        cursor: pointer;
-                        border-radius: 4px;
-                        white-space: nowrap;
-                    " onclick="window.location.reload()">로그아웃</button>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            if st.button("로그아웃"):
+                st.session_state["logged_in"] = False
+                st.session_state["username"] = None
+                st.session_state["name"] = None
+                st.rerun()
 
 # 현재 난이도 표시
 def show_current_level():
