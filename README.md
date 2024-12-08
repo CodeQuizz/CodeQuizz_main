@@ -15,21 +15,26 @@
 
 ## 프로젝트 구조
 
-```
-project_root/
-├── pages/
-│   ├── 1_👋_Intro.py        # 인트로 페이지
-│   ├── 2_🔐_Login.py        # 로그인/회원가입 페이지
-│   ├── 3_📝_Quiz.py         # 메인 퀴즈 페이지
-│   └── 4_📊_Results.py      # 결과 분석 페이지
-├── utils/
-│   ├── session_state.py     # 세션 관리
-│   ├── quiz_data.py         # 퀴즈 데이터 관리
-│   └── analytics.py         # 결과 분석
+```project_root/
+├── .github/                 # GitHub 관련 워크플로 및 설정
+├── assets/                  # 이미지 및 기타 정적 파일
+│   ├── coding.png           # 코딩 관련 이미지
+│   └── How_To_Use.png       # 사용 방법 이미지
 ├── data/                    # JSON 데이터 파일들
-├── assets/                  # 이미지 및 스타일 파일
-└── Home.py                  # 메인 앱
+│   ├── quiz_questions.json  # 퀴즈 질문 데이터
+│   └── users.json           # 사용자 정보 데이터
+├── myenv/                   # 가상환경 폴더 (일반적으로 .gitignore에 포함)
+├── pages/                   # 개별 페이지 구성
+│   ├── Login.py             # 로그인/회원가입 페이지
+│   ├── Main.py              # 메인 퀴즈 페이지
+│   └── Results.py           # 결과 분석 페이지
+├── utils/                   # 유틸리티 모듈
+├── .gitignore               # Git에서 무시할 파일 설정
+├── LICENSE                  # 프로젝트 라이선스 정보
+├── README.md                # 프로젝트 개요 및 설명
+└── requirements.txt         # 프로젝트 의존성 목록
 ```
+
 
 ## 시작하기
 
