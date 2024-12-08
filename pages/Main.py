@@ -11,13 +11,52 @@ def navbar():
     with col2:
         if st.session_state.get("logged_in"):
             st.write(f"👤 {st.session_state['name']}님")
+
     with col3:
         if st.session_state.get("logged_in"):
-            if st.button("로그아웃"):
-                st.session_state["logged_in"] = False
-                st.session_state["username"] = None
-                st.session_state["name"] = None
-                st.rerun()
+            st.markdown(
+                """
+                <div style="display: flex; justify-content: flex-end; align-items: center;">
+                    <button style="
+                        border: none;
+                        padding: 5px 10px;
+                        font-size: 14px;
+                        cursor: pointer;
+                        border-radius: 4px;
+                        white-space: nowrap;
+                    " onclick="window.location.reload()">로그아웃</button>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+# 현재 난이도 표시
+def show_current_level():
+    if st.session_state.get("selected_level"):
+        level_colors = {
+            "초급": "#4CAF50",  # 초록색
+            "중급": "#FFA500",  # 주황색
+            "고급": "#FF4500"   # 빨간색
+        }
+        selected_color = level_colors.get(st.session_state["selected_level"], "#000000")
+        st.markdown(
+            f"""
+            <div style="
+                border-radius: 10px; 
+                padding: 6px 8px; 
+                background-color: {selected_color}; 
+                text-align: center; 
+                display: inline-block; 
+                color: white;
+                background-color: {selected_color};
+                font-size: 13px;
+            ">
+                {st.session_state['selected_level']}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
 
 @st.cache_data
 def load_questions(file_path):
@@ -79,10 +118,15 @@ def main():
         secs = elapsed % 60
         st.markdown(f"⏱️ 경과 시간: {mins:02d}분 {secs:02d}초")
 
+        show_current_level()
+
         if st.session_state.current_question < len(st.session_state.selected_questions):
             question_data = st.session_state.selected_questions[st.session_state.current_question]
             st.subheader(f"문제 {st.session_state.current_question + 1}/{len(st.session_state.selected_questions)}")
-            st.write(question_data["question"])
+            st.markdown(
+                f"<p style='font-size: 18px; '>{question_data['question']}</p>",
+                unsafe_allow_html=True
+            )
 
             if st.session_state.show_hint:
                 st.info(f"힌트: {question_data['hint']}")
@@ -115,8 +159,12 @@ def main():
                     st.session_state.feedback = None
                     st.rerun()
         else:
+            st.balloons()
             st.success("모든 문제를 완료했습니다!")
-            st.write(f"최종 점수: {st.session_state.score}/{len(st.session_state.selected_questions)}")
+            st.markdown(
+                f"<p style='font-weight: bold;'>최종 점수: {st.session_state.score}/{len(st.session_state.selected_questions)}</p>",
+                unsafe_allow_html=True
+            )
             
             col1, col2 = st.columns(2)
             with col1:
