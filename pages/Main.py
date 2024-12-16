@@ -3,7 +3,6 @@ import json
 import random
 import time
 
-# 현재 위치를 알려주는 UX 추가
 def navbar():
     col1, col2, col3 = st.columns([6, 3, 1])
     with col1:
@@ -14,20 +13,18 @@ def navbar():
     with col3:
         if st.session_state.get("logged_in"):
             if st.button("로그아웃"):
-                # 로그아웃 처리: 세션 상태 초기화
                 for key in list(st.session_state.keys()):
                     del st.session_state[key]
-                st.session_state["logged_in"] = False  # 로그인 상태 해제
-                st.session_state["name"] = None  # 사용자 정보 초기화
-                st.switch_page("pages/Login.py")  # 로그인 페이지로 이동
+                st.session_state["logged_in"] = False
+                st.session_state["name"] = None
+                st.switch_page("pages/Login.py")
 
-# 현재 난이도 표시
 def show_current_level():
     if st.session_state.get("selected_level"):
         level_colors = {
-            "초급": "#4CAF50",  # 초록색
-            "중급": "#FFA500",  # 주황색
-            "고급": "#FF4500"   # 빨간색
+            "초급": "#4CAF50",
+            "중급": "#FFA500",
+            "고급": "#FF4500"
         }
         selected_color = level_colors.get(st.session_state["selected_level"], "#000000")
         st.markdown(
@@ -68,7 +65,7 @@ if "show_hint" not in st.session_state:
 if "feedback" not in st.session_state:
     st.session_state.feedback = None
 if "wrong_answers" not in st.session_state:
-    st.session_state.wrong_answers = []  # 틀린 문제 저장
+    st.session_state.wrong_answers = []
 if "start_time" not in st.session_state:
     st.session_state.start_time = time.time()
 
@@ -80,7 +77,7 @@ def start_quiz():
     st.session_state.feedback = None
     st.session_state.selected_questions = questions_data[st.session_state.selected_level]
     random.shuffle(st.session_state.selected_questions)
-    st.session_state.wrong_answers = []  # 틀린 문제 초기화
+    st.session_state.wrong_answers = []
     st.session_state.start_time = time.time()
 
 def main():
@@ -93,12 +90,21 @@ def main():
 
     if not st.session_state.quiz_started:
         st.title("퀴즈 옵션")
-        st.subheader("난이도 설정")
-        st.session_state.selected_level = st.selectbox(
-            "난이도를 선택하세요:", list(questions_data.keys())
-        )
-        if st.button("퀴즈 시작"):
-            start_quiz()
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("난이도 설정")
+            st.session_state.selected_level = st.selectbox(
+                "난이도를 선택하세요:", list(questions_data.keys())
+            )
+            if st.button("퀴즈 시작"):
+                start_quiz()
+                
+        with col2:
+            st.subheader("다른 퀴즈")
+            if st.button("인터랙티브 코딩 퀴즈 시작"):
+                st.switch_page("pages/Interactive.py")
 
     if st.session_state.quiz_started:
         elapsed = int(time.time() - st.session_state.start_time)
@@ -112,7 +118,7 @@ def main():
             question_data = st.session_state.selected_questions[st.session_state.current_question]
             st.subheader(f"문제 {st.session_state.current_question + 1}/{len(st.session_state.selected_questions)}")
             st.markdown(
-                f"<p style='font-size: 18px; '>{question_data['question']}</p>",
+                f"<p style='font-size: 18px;'>{question_data['question']}</p>",
                 unsafe_allow_html=True
             )
 
@@ -132,7 +138,7 @@ def main():
                     st.session_state.score += 1
                 else:
                     st.session_state.feedback = f"오답입니다. 정답은 '{question_data['answer']}' 입니다."
-                    st.session_state.wrong_answers.append(question_data)  # 틀린 문제 저장
+                    st.session_state.wrong_answers.append(question_data)
                 st.rerun()
 
             if st.session_state.feedback:
@@ -154,7 +160,7 @@ def main():
                 unsafe_allow_html=True
             )
             
-            col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
             with col1:
                 if st.button("퀴즈 다시 풀기"):
                     st.session_state.quiz_started = False
@@ -162,6 +168,9 @@ def main():
             with col2:
                 if st.button("결과 페이지로"):
                     st.switch_page("pages/Results.py")
+            with col3:
+                if st.button("인터랙티브 퀴즈"):
+                    st.switch_page("pages/Interactive.py")
 
 if __name__ == "__main__":
     main()

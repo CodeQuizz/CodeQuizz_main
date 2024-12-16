@@ -1,3 +1,4 @@
+# pages/Results.py
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,10 +13,12 @@ def navbar():
     with col3:
         if st.session_state.get("logged_in"):
             if st.button("로그아웃"):
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
                 st.session_state["logged_in"] = False
                 st.session_state["username"] = None
                 st.session_state["name"] = None
-                st.rerun()
+                st.switch_page("pages/Login.py")
 
 def main():
     navbar()
@@ -56,7 +59,6 @@ def main():
 
     st.markdown("### 점수 시각화")
 
-    # 레이더 차트 데이터 생성
     max_score = 100
     values = [score_percentage]
 
@@ -74,12 +76,10 @@ def main():
 
     st.pyplot(fig)
 
-    # 틀린 문제 분석 부분
     st.markdown("### ❌ 틀린 문제 분석")
     if wrong_answers:
         for i, question in enumerate(wrong_answers):
             with st.expander(f"문제 {i + 1}", expanded=False):
-                # 카드 형태로 문제 표시
                 card = f"""
                 <div style="background-color: #f8d7da; border-left: 5px solid #f5c6cb; padding: 10px; margin: 10px 0;">
                     <strong>문제:</strong> {question['question']}<br>
@@ -90,8 +90,18 @@ def main():
     else:
         st.markdown("모든 문제를 맞추셨습니다! 🎉")
 
-    if st.button("🔄 다시 풀기"):
-        st.switch_page("pages/Main.py")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("🔄 다시 풀기"):
+            st.session_state.quiz_started = False
+            st.switch_page("pages/Main.py")
+    with col2:
+        if st.button("📝 인터랙티브 퀴즈"):
+            st.switch_page("pages/Interactive.py")
+    with col3:
+        if st.button("🏠 홈으로"):
+            st.session_state.quiz_started = False
+            st.switch_page("pages/Main.py")
 
 if __name__ == "__main__":
     main()
