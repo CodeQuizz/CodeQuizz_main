@@ -9,7 +9,7 @@ def navbar():
         st.markdown("🏠 Home > Login > Quiz > Results")
     with col2:
         if st.session_state.get("logged_in"):
-            st.write(f"👤 {st.session_state['name']}님")
+            st.write(f"👤 {st.session_state.get('nickname', st.session_state['name'])}님")
     with col3:
         if st.session_state.get("logged_in"):
             if st.button("로그아웃"):
