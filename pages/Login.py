@@ -6,7 +6,7 @@ from pathlib import Path
 def navbar():
     col1, col2, col3 = st.columns([6, 3, 1])
     with col1:
-        st.markdown("🏠 Home > Login")
+        st.markdown("<h1 style='font-size: 36px; color: #4CAF50;'>🏠 Home > Login</h1>", unsafe_allow_html=True)
 
 # 사용자 정보를 불러오는 함수
 def load_users():
@@ -18,6 +18,49 @@ def load_users():
 
 # 메인 함수
 def main():
+    # 사용자 정의 스타일
+    st.markdown("""
+        <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: 'Arial', sans-serif;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .stButton>button:hover {
+            background-color: #45a049;
+        }
+        .stTextInput>div>div>input {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+        }
+        .stTextInput>div>label {
+            font-size: 18px;
+            color: #333;
+        }
+        .stError {
+            color: red;
+            font-size: 14px;
+        }
+        .stSuccess {
+            color: green;
+            font-size: 14px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     navbar()
     st.title("Programming Quiz Login 🔐")
     
