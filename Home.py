@@ -1,6 +1,9 @@
 import streamlit as st
 import base64
 import os
+import json
+import calendar
+from datetime import datetime, date
 
 st.set_page_config(page_title="Programming Quiz App", page_icon="🎯", layout="wide")
 
@@ -14,7 +17,7 @@ def navbar():
             st.write(f"👤 {st.session_state['name']}님")
     with col3:
         if st.session_state.get("logged_in"):
-            if st.button("로그아웃"):
+            if st.button("\ub85c\uadf8\uc544\uc6c3", key="logout_button"):
                 st.session_state["logged_in"] = False
                 st.session_state["username"] = None
                 st.session_state["name"] = None
@@ -39,21 +42,10 @@ def set_background(png_file_path):
         unsafe_allow_html=True
     )
 
-# `assets` 폴더에 저장된 배경 이미지 파일 경로
-assets_dir = "assets"
-background_image_file = os.path.join(assets_dir, "coding.png")  # PNG 파일 이름은 필요에 따라 수정 가능
-
-# 배경 이미지 설정
-if os.path.exists(background_image_file):
-    set_background(background_image_file)
-else:
-    st.error(f"Background image file not found in '{assets_dir}' directory!")
-
 # How To Use 설명서 이미지
 def show_how_to_use():
     how_to_use_image_path = "assets/How To Use.png"  # 이미지 파일 경로
     if os.path.exists(how_to_use_image_path):
-        # HTML div를 사용하여 이미지 가운데 정렬
         st.markdown(
             f"""
             <div style="display: flex; justify-content: center;">
@@ -65,83 +57,137 @@ def show_how_to_use():
     else:
         st.error("How to Use 설명서 이미지가 'assets' 폴더에 없습니다.")
 
-# CSS 스타일 설정
-st.markdown(
-    """
-    <style>
-    /* 기본 텍스트와 제목 스타일 */
-    .stMarkdown, .stTitle, .stHeader {
-        color: black !important;
-    }
+def check_attendance():
+    # 로그인 여부 확인
+    if not st.session_state.get("logged_in"):
+        st.markdown('<p style="color:black;">🚨 로그인 후 이용 가능합니다. 🚨</p>', unsafe_allow_html=True)
+        return
 
-    /* Expander 헤더 전체 스타일 */
-    .stExpander > details > summary {
-        color: white !important;         /* 텍스트 색상을 흰색으로 */
-        background-color: black !important; /* 배경 색상을 검은색으로 */
-        border-radius: 5px;              /* 둥근 모서리 */
-        padding: 10px;                   /* 여백 추가 */
-    }
+    # 사용자 데이터 파일 경로
+    attendance_file = "data/attendance.json"
 
-    /* Expander 헤더 호버 효과 */
-    .stExpander > details > summary:hover {
-        background-color: #333333 !important; /* 호버 시 약간 밝은 검정 */
-        color: white !important;              /* 호버 시에도 텍스트 색상 흰색 유지 */
-    }
+    # 출석 기록 로드 (없으면 생성)
+    try:
+        with open(attendance_file, "r") as f:
+            attendance_records = json.load(f)
+    except FileNotFoundError:
+        attendance_records = {}
 
-    /* Expander 내부 텍스트 스타일 */
-    .stExpander > div > div {
-        color: black !important; /* 텍스트 색상을 검정 */
-        background-color: rgba(240, 240, 240, 1) !important; /* 연한 회색 배경 */
-        padding: 20px; /* 내부 여백 */
-        border-radius: 10px; /* 둥근 모서리 */
-        line-height: 1.6; /* 줄 간격 */
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-        border: 1px solid rgba(200, 200, 200, 0.8); /* 부드러운 테두리 */
-    }
+    username = st.session_state['username']
+    today = date.today().isoformat()
 
-    /* Expander 내부 텍스트 색상 및 가독성 */
-    .stExpander > div > div p {
-        color: #333333 !important; /* 짙은 회색 텍스트 */
-        font-size: 16px; /* 글씨 크기 */
-        font-family: Arial, sans-serif; /* 텍스트 폰트 */
-    }
+    # 오늘 이미 출석체크했는지 확인
+    if username in attendance_records and today in attendance_records[username]:
+        st.markdown('<p style="color:black;">✅ 오늘은 이미 출석 체크하셨습니다! ✅</p>', unsafe_allow_html=True)
+        
+        # 달력 표시
+        show_attendance_calendar(attendance_records.get(username, []))
+        return
 
-    /* Expander 내 제목 스타일 */
-    .stExpander > div > div h3, 
-    .stExpander > div > div h4 {
-        color: #222222 !important; /* 더 짙은 회색 제목 */
-        border-bottom: 2px solid #007bff; /* 파란색 강조선 */
-        padding-bottom: 10px;
-        margin-bottom: 15px;
-        font-weight: bold;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+    # 출석 체크 처리
+    if username not in attendance_records:
+        attendance_records[username] = []
+
+    attendance_records[username].append(today)
+
+    # 출석 기록 저장
+    with open(attendance_file, "w") as f:
+        json.dump(attendance_records, f, indent=4)
+
+    # 연속 출석 일수 계산
+    consecutive_days = calculate_consecutive_attendance(attendance_records[username])
+
+    # 달력 표시
+    show_attendance_calendar(attendance_records[username])
+
+    st.success(f"출석 체크 완료! 🎉\n" 
+               f"현재 연속 출석 일수: {consecutive_days}일 👍")
+
+def show_attendance_calendar(attendance_dates):
+    # 출석 날짜를 날짜 객체로 변환
+    attendance_dates = [datetime.fromisoformat(date_str).date() for date_str in attendance_dates]
+
+    # 현재 연도와 월 가져오기
+    now = datetime.now()
+    year = now.year
+    month = now.month
+
+    # 오늘 날짜 가져오기
+    today = date.today()
+
+    # 달력 생성
+    cal = calendar.monthcalendar(year, month)
+    
+    # 달력 HTML 생성
+    st.markdown(f"<h2 style='color: black;'>{year}년 {month}월 출석 현황</h2>", unsafe_allow_html=True)
+    
+    # 달력 테이블 생성
+    calendar_html = "<table style='width:100%; border-collapse: collapse; background-color: black;'>"
+    calendar_html += "<tr style='background-color: #333;'>"
+    for day in ['월', '화', '수', '목', '금', '토', '일']:
+        calendar_html += f"<th style='border: 1px solid #ddd; padding: 8px; color: white;'>{day}</th>"
+    calendar_html += "</tr>"
+
+    for week in cal:
+        calendar_html += "<tr>"
+        for day in week:
+            if day == 0:  # 빈 날짜
+                calendar_html += "<td style='border: 1px solid #ddd; padding: 8px; background-color: black;'></td>"
+            else:
+                current_date = date(year, month, day)
+                
+                # 스타일 설정
+                if current_date in attendance_dates:
+                    # 출석 체크한 날짜
+                    style = "background-color: yellow; color: black; font-weight: bold;"
+                elif current_date == today:
+                    # 오늘 날짜
+                    style = "background-color: white; color: black; font-weight: bold;"
+                else:
+                    # 다른 날짜
+                    style = "background-color: black; color: white;"
+                
+                calendar_html += f"<td style='border: 1px solid #ddd; padding: 8px; {style}'>{day}</td>"
+        calendar_html += "</tr>"
+    
+    calendar_html += "</table>"
+    
+    st.markdown(calendar_html, unsafe_allow_html=True)
 
 def main():
     # 세션 상태 초기화
     if 'show_image' not in st.session_state:
         st.session_state.show_image = False  # 이미지 표시 여부 상태 초기화
 
+    # 배경 이미지 설정
+    assets_dir = "assets"
+    background_image_file = os.path.join(assets_dir, "coding.png")
+    if os.path.exists(background_image_file):
+        set_background(background_image_file)
+
     navbar()
+
     st.markdown("<h1 style='color: black;'>Welcome to Programming Quiz! 🚀</h1>", unsafe_allow_html=True)
-    
-    st.markdown(""" 
+    st.markdown("""
+    <p style='color: black;'>
     ### 프로그래밍 실력을 테스트해보세요!
     다양한 난이도의 퀴즈로 실력을 향상시켜보세요.
-    """)
+    </p>
+    """, unsafe_allow_html=True)
     
     # How to Use 버튼 클릭 시 이미지 토글
-    if st.button("How to Use (사용 방법)", use_container_width=True):
+    if st.button("How to Use (사용 방법)", use_container_width=True, key="how_to_use_button"):
         st.session_state.show_image = not st.session_state.show_image  # 상태 토글
 
-    # 이미지가 표시되어야 할 때
     if st.session_state.show_image:
         show_how_to_use()
 
-    if st.button("시작하기 ▶️", use_container_width=True):
+    # 출석 체크 버튼 추가
+    if st.button("📅 출석 체크", use_container_width=True, key="attendance_check_button"):
+        check_attendance()
+
+    # 시작하기 버튼
+    if st.button("시작하기 ▶️", use_container_width=True, key="start_quiz_button"):
         st.switch_page("pages/Login.py")
 
 if __name__ == "__main__":
