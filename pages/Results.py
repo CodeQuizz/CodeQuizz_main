@@ -30,27 +30,27 @@ def main():
 
     st.title("📊 퀴즈 결과")
     
-    score_percentage = st.session_state.get("score_percentage", 0)
+    score = st.session_state.get("score", 0)
     total_questions = len(st.session_state.get("selected_questions", []))
     wrong_answers = st.session_state.get("wrong_answers", [])
     
     if total_questions > 0:
-        score_percentage_percentage = (score_percentage / total_questions) * 100
+        score_percentage = (score / total_questions) * 100
     else:
-        score_percentage_percentage = 0
+        score_percentage = 0
 
-    st.markdown(f"#### 점수: {score_percentage}/{total_questions} ({score_percentage_percentage:.1f}%)")
+    st.markdown(f"#### 점수: {score}/{total_questions} ({score_percentage:.1f}%)")
 
     feedback = ""
-    if score_percentage_percentage == 100:
+    if score_percentage == 100:
         feedback = "💯 **매우 잘하고 있습니다. 지식이 탄탄하시네요!**"
-    elif score_percentage_percentage >= 80:
+    elif score_percentage >= 80:
         feedback = "🌟 **지식이 탄탄하시네요! 조금만 더 공부하시면 될 거 같습니다.**"
-    elif score_percentage_percentage >= 60:
+    elif score_percentage >= 60:
         feedback = "💪 **열심히 정진하시면 좋은 결과를 얻을 수 있을거에요!**"
-    elif score_percentage_percentage >= 40:
+    elif score_percentage >= 40:
         feedback = "📚 **발전 가능성이 있습니다. 충분히 공부하면 좋아질 수 있습니다.**"
-    elif score_percentage_percentage >= 20:
+    elif score_percentage >= 20:
         feedback = "👨‍🎓 **부족합니다. 충분한 공부를 통해 더 좋은 결과를 얻어봐요.**"
     else:
         feedback = "🔍 **다른 분야를 알아보는 것도 나쁘지 않은 선택입니다!**"
@@ -59,11 +59,11 @@ def main():
 
     st.markdown("### 점수 시각화")
 
-    max_score_percentage = 100
-    values = [score_percentage_percentage]
+    max_score = 100
+    values = [score_percentage]
 
     angles = np.linspace(0, 2 * np.pi, 100, endpoint=True)
-    radius = [score_percentage_percentage / max_score_percentage] * len(angles)
+    radius = [score_percentage / max_score] * len(angles)
 
     fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
     ax.fill(angles, radius, color='teal', alpha=0.4)
@@ -72,7 +72,7 @@ def main():
     ax.set_yticklabels(["0", "20", "40", "60", "80", "100"], fontsize=10)
     ax.set_xticks([])
     ax.set_xticklabels([])
-    ax.set_title("Your score_percentage", fontsize=15, y=1.1)
+    ax.set_title("Your Score", fontsize=15, y=1.1)
 
     st.pyplot(fig)
 
@@ -91,7 +91,7 @@ def main():
         st.markdown("모든 문제를 맞추셨습니다! 🎉")
 
 
-    st.markdown("### 교재 추천")
+        st.markdown("### 교재 추천")
     def get_books(score_percentage):
         if score_percentage <= 20:
             return [
@@ -166,9 +166,7 @@ def main():
                 },
             ]
     recommended_books = get_books(score_percentage)
-
     cols = st.columns(3)
-
     with st.expander("📖 추천 교재 보기"):
         cols = st.columns(3)
         for idx, book in enumerate(recommended_books):
@@ -178,10 +176,6 @@ def main():
                 st.write(f"**저자**: {book['author']}")
                 st.write(f"**청구기호**: {book['청구기호']}")
                 st.write(f"**소장처**: {book['소장처']}")
-
-    
-
-
 
     col1, col2, col3 = st.columns(3)
     with col1:
