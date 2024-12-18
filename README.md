@@ -27,6 +27,7 @@ project_root/
 │   └── users.json           # 사용자 정보 데이터
 ├── myenv/                   # 가상환경 폴더 (일반적으로 .gitignore에 포함)
 ├── pages/                   # 개별 페이지 구성
+│   ├── Interactive.py       # 인터렉티브한 문제 풀이(실시간 코드 적용)
 │   ├── Login.py             # 로그인/회원가입 페이지
 │   ├── Main.py              # 메인 퀴즈 페이지
 │   └── Results.py           # 결과 분석 페이지
