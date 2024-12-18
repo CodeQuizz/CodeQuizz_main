@@ -30,27 +30,27 @@ def main():
 
     st.title("📊 퀴즈 결과")
     
-    score = st.session_state.get("score", 0)
+    score_percentage = st.session_state.get("score_percentage", 0)
     total_questions = len(st.session_state.get("selected_questions", []))
     wrong_answers = st.session_state.get("wrong_answers", [])
     
     if total_questions > 0:
-        score_percentage = (score / total_questions) * 100
+        score_percentage_percentage = (score_percentage / total_questions) * 100
     else:
-        score_percentage = 0
+        score_percentage_percentage = 0
 
-    st.markdown(f"#### 점수: {score}/{total_questions} ({score_percentage:.1f}%)")
+    st.markdown(f"#### 점수: {score_percentage}/{total_questions} ({score_percentage_percentage:.1f}%)")
 
     feedback = ""
-    if score_percentage == 100:
+    if score_percentage_percentage == 100:
         feedback = "💯 **매우 잘하고 있습니다. 지식이 탄탄하시네요!**"
-    elif score_percentage >= 80:
+    elif score_percentage_percentage >= 80:
         feedback = "🌟 **지식이 탄탄하시네요! 조금만 더 공부하시면 될 거 같습니다.**"
-    elif score_percentage >= 60:
+    elif score_percentage_percentage >= 60:
         feedback = "💪 **열심히 정진하시면 좋은 결과를 얻을 수 있을거에요!**"
-    elif score_percentage >= 40:
+    elif score_percentage_percentage >= 40:
         feedback = "📚 **발전 가능성이 있습니다. 충분히 공부하면 좋아질 수 있습니다.**"
-    elif score_percentage >= 20:
+    elif score_percentage_percentage >= 20:
         feedback = "👨‍🎓 **부족합니다. 충분한 공부를 통해 더 좋은 결과를 얻어봐요.**"
     else:
         feedback = "🔍 **다른 분야를 알아보는 것도 나쁘지 않은 선택입니다!**"
@@ -59,11 +59,11 @@ def main():
 
     st.markdown("### 점수 시각화")
 
-    max_score = 100
-    values = [score_percentage]
+    max_score_percentage = 100
+    values = [score_percentage_percentage]
 
     angles = np.linspace(0, 2 * np.pi, 100, endpoint=True)
-    radius = [score_percentage / max_score] * len(angles)
+    radius = [score_percentage_percentage / max_score_percentage] * len(angles)
 
     fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
     ax.fill(angles, radius, color='teal', alpha=0.4)
@@ -72,7 +72,7 @@ def main():
     ax.set_yticklabels(["0", "20", "40", "60", "80", "100"], fontsize=10)
     ax.set_xticks([])
     ax.set_xticklabels([])
-    ax.set_title("Your Score", fontsize=15, y=1.1)
+    ax.set_title("Your score_percentage", fontsize=15, y=1.1)
 
     st.pyplot(fig)
 
@@ -89,6 +89,99 @@ def main():
                 st.markdown(card, unsafe_allow_html=True)
     else:
         st.markdown("모든 문제를 맞추셨습니다! 🎉")
+
+
+    st.markdown("### 교재 추천")
+    def get_books(score_percentage):
+        if score_percentage <= 20:
+            return [
+                {
+                    "title": "(점프 투) 파이썬",
+                    "author": "박응용",
+                    "image": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/9791163034735.jpg",
+                    "청구기호": "005.133 박68ㅍ 2019",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+                {
+                    "title": "혼자 공부하는 파이썬",
+                    "author": "윤인성",
+                    "image": "https://image.yes24.com/goods/109625396/XL",
+                    "청구기호": "005.133 윤69ㅎ",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+                {
+                    "title": "(으뜸) 파이썬",
+                    "author": "박동규/강영민",
+                    "image": "https://image.yes24.com/goods/89140722/XL",
+                    "청구기호": "005.133 박24ㅍ",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+            ]
+        elif score_percentage <= 60:
+            return [
+                {
+                    "title": "파이썬 코딩의 기술 : 똑똑하게 코딩하는 법",
+                    "author": "Slatkin Brett",
+                    "image": "https://gimg.gilbut.co.kr/book/BN002890/rn_view_BN002890.jpg",
+                    "청구기호": "005.133 Sl1eH",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+                {
+                    "title": "Python cookbook",
+                    "author": "Beazley David M. Jones Brian K.",
+                    "image": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/9788992649681.jpg",
+                    "청구기호": "005.133 B38pyH 2013",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+                {
+                    "title": "파이썬 알고리즘 인터뷰 = Coding interview : 95가지 알고리즘 문제 풀이로 완성하는 코딩 테스트",
+                    "author": "박상길",
+                    "image": "https://image.yes24.com/goods/91084402/XL",
+                    "청구기호": "005.133 박51ㅍ",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+            ]
+        else:
+            return [
+                {
+                    "title": "파이썬 웹 프로그래밍 : Django(장고)로 배우는 쉽고 빠른 웹 개발",
+                    "author": "김석훈",
+                    "image": "https://www.hanbit.co.kr/data/books/B4329597070_l.jpg",
+                    "청구기호": "005.133 김532ㅍ 2018",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+                {
+                    "title": "전문가를 위한 파이썬",
+                    "author": "Ramalho Luciano",
+                    "image": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788968484988.jpg",
+                    "청구기호": "005.133 R14fH",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+                {
+                    "title": "슬기로운 파이썬 트릭 : 짧고 흥미로운 코드로 배우는 파이썬 실용 코딩",
+                    "author": "Dan Bader",
+                    "image": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/9788966262342.jpg",
+                    "청구기호": "005.133 B14pH",
+                    "소장처": "일송기념도서관/(3층)사회/자연과학자료실/"
+                },
+            ]
+    recommended_books = get_books(score_percentage)
+
+    cols = st.columns(3)
+
+    with st.expander("📖 추천 교재 보기"):
+        cols = st.columns(3)
+        for idx, book in enumerate(recommended_books):
+            with cols[idx % 3]:
+                st.image(book['image'], width=150)
+                st.write(f"**{book['title']}**")
+                st.write(f"**저자**: {book['author']}")
+                st.write(f"**청구기호**: {book['청구기호']}")
+                st.write(f"**소장처**: {book['소장처']}")
+
+    
+
+
 
     col1, col2, col3 = st.columns(3)
     with col1:
